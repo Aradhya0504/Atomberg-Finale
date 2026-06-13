@@ -171,87 +171,117 @@ export default function AgentDashboard() {
     <div className="h-screen overflow-hidden flex flex-col page-enter" style={{ background:'#f7f5f0' }}>
 
       {/* ── Header ── */}
-      <header className="shrink-0 z-20 flex items-center justify-between px-6"
-        style={{ background:'#fff', borderBottom:'1px solid #f0ede8', boxShadow:'0 1px 12px rgba(0,0,0,0.06)', height:'64px' }}>
+      <header className="shrink-0 z-20"
+        style={{ background:'#fff', borderBottom:'1px solid #f0ede8', boxShadow:'0 1px 16px rgba(0,0,0,0.07)', padding:'0 40px', height:'72px', display:'flex', alignItems:'center', gap:'16px' }}>
 
         {/* Brand */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
             style={{ background:'linear-gradient(135deg,#f59e0b,#d97706)', boxShadow:'0 3px 12px #f59e0b44' }}>
             <AtomIcon size={20} strokeWidth={3} />
           </div>
           <div>
-            <p className="font-black text-base leading-tight" style={{ color:'#1c1917' }}>Atomberg Support</p>
+            <p className="font-black text-sm leading-tight" style={{ color:'#1c1917' }}>Atomberg Support</p>
             <p className="text-xs leading-tight" style={{ color:'#a8a29e' }}>Real-Time Video Support Platform</p>
           </div>
-          <div className="w-px h-8 mx-1" style={{ background:'#f0ede8' }} />
-          <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-bold"
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-bold flex-shrink-0"
             style={{ background:'#fef9c3', color:'#b45309', border:'1px solid #fcd34d', fontSize:'10px', letterSpacing:'0.06em' }}>
             <span className="w-1.5 h-1.5 rounded-full status-blink" style={{ background:'#f59e0b' }} /> LIVE
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Search */}
-          <div className="relative hidden md:block">
-            <span style={{ position:'absolute', left:'12px', top:'50%', transform:'translateY(-50%)', color:'#a8a29e', fontSize:'14px', pointerEvents:'none' }}>🔍</span>
-            <input
-              type="text" value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Search sessions…"
-              style={{ paddingLeft:'34px', paddingRight:'12px', paddingTop:'7px', paddingBottom:'7px', border:'1.5px solid #e5e2dd', borderRadius:'10px', background:'#f7f5f0', color:'#1c1917', outline:'none', fontSize:'13px', width:'200px', transition:'border-color 0.2s, box-shadow 0.2s, width 0.3s' }}
-              onFocus={e => { e.target.style.borderColor='#f59e0b'; e.target.style.boxShadow='0 0 0 3px #f59e0b14'; e.target.style.width='240px'; }}
-              onBlur={e  => { e.target.style.borderColor='#e5e2dd'; e.target.style.boxShadow='none'; e.target.style.width='200px'; }}
-            />
-          </div>
+        {/* Divider */}
+        <div style={{ width:1, height:36, background:'#f0ede8', flexShrink:0 }} />
 
-          {/* Refresh */}
-          <button onClick={manualRefresh} title="Refresh"
-            className="w-8 h-8 rounded-lg flex items-center justify-center btn-shine"
-            style={{ background:'#fff', border:'1px solid #e5e2dd', color:'#78716c' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
-              className={refreshing ? 'spin' : ''} style={{ display:'block', transition:'transform 0.3s' }}>
-              <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
-              <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
-            </svg>
-          </button>
-
-          {/* User pill */}
-          <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl"
-            style={{ background:'#f7f5f0', border:'1.5px solid #e5e2dd' }}>
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0"
-              style={{ background:'linear-gradient(135deg,#f59e0b,#d97706)', color:'#fff' }}>
-              {(user.name || 'A').charAt(0).toUpperCase()}
-            </div>
-            <div className="leading-tight">
-              <p className="text-sm font-bold" style={{ color:'#1c1917' }}>{user.name}</p>
-              <p className="text-xs font-semibold capitalize" style={{ color:'#d97706' }}>{user.role}</p>
-            </div>
-          </div>
-
-          {user.role === 'admin' && (
-            <button onClick={() => navigate('/admin')} className="btn-shine"
-              style={{ background:'#fff', color:'#b45309', border:'1.5px solid #fcd34d', fontWeight:700, fontSize:'13px', padding:'8px 16px', borderRadius:'10px', cursor:'pointer' }}>
-              ⚙ Admin
-            </button>
-          )}
-
-          <button onClick={logout} className="btn-shine"
-            onMouseEnter={e => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#dc2626'; }}
-            onMouseLeave={e => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#e5e2dd'; e.currentTarget.style.color='#78716c'; }}
-            style={{ background:'#fff', color:'#78716c', border:'1.5px solid #e5e2dd', fontWeight:700, fontSize:'13px', padding:'8px 16px', borderRadius:'10px', cursor:'pointer', transition:'background 0.2s, border-color 0.2s, color 0.2s' }}>
-            Sign out
-          </button>
+        {/* ── Stat chips (filter) ── */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {[
+            { key:'active',  label:'Active Sessions', value:activeCt,  dot:'#16a34a', activeBg:'#dcfce7', activeColor:'#15803d', activeBorder:'#16a34a44' },
+            { key:'waiting', label:'Waiting',          value:waitingCt, dot:'#f59e0b', activeBg:'#fef9c3', activeColor:'#b45309', activeBorder:'#f59e0b44' },
+            { key:'ended',   label:'Completed',        value:endedCt,   dot:'#94a3b8', activeBg:'#f1f5f9', activeColor:'#475569', activeBorder:'#94a3b844' },
+          ].map(c => {
+            const on = filter === c.key;
+            return (
+              <button key={c.key} onClick={() => toggleFilter(c.key)}
+                style={{
+                  display:'flex', alignItems:'center', gap:'8px',
+                  padding:'8px 16px', borderRadius:'12px', cursor:'pointer',
+                  background: on ? c.activeBg : '#f7f5f0',
+                  border: `1.5px solid ${on ? c.activeBorder : '#ede9e2'}`,
+                  transition:'all 0.2s',
+                }}>
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${c.key === 'active' && activeCt > 0 ? 'status-blink' : ''}`}
+                  style={{ background: c.dot }} />
+                <span style={{ fontSize:'22px', fontWeight:900, color: on ? c.activeColor : '#1c1917', lineHeight:1 }}>{c.value}</span>
+                <span style={{ fontSize:'11px', fontWeight:600, color: on ? c.activeColor : '#78716c', whiteSpace:'nowrap' }}>{c.label}</span>
+              </button>
+            );
+          })}
         </div>
+
+        {/* Spacer */}
+        <div style={{ flex:1 }} />
+
+        {/* Search */}
+        <div className="relative hidden md:block flex-shrink-0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8a29e" strokeWidth="2" strokeLinecap="round"
+            style={{ position:'absolute', left:'11px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }}>
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search sessions…"
+            style={{ paddingLeft:'34px', paddingRight:'12px', paddingTop:'8px', paddingBottom:'8px', border:'1.5px solid #e5e2dd', borderRadius:'10px', background:'#f7f5f0', color:'#1c1917', outline:'none', fontSize:'13px', width:'200px', transition:'border-color 0.2s, width 0.3s' }}
+            onFocus={e => { e.target.style.borderColor='#f59e0b'; e.target.style.width='240px'; }}
+            onBlur={e  => { e.target.style.borderColor='#e5e2dd'; e.target.style.width='200px'; }} />
+        </div>
+
+        {/* Refresh */}
+        <button onClick={manualRefresh} title="Refresh"
+          style={{ width:36, height:36, borderRadius:'10px', background:'#f7f5f0', border:'1.5px solid #e5e2dd', color:'#78716c', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', flexShrink:0 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+            className={refreshing ? 'spin' : ''}>
+            <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+          </svg>
+        </button>
+
+        {/* User pill */}
+        <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl flex-shrink-0"
+          style={{ background:'#f7f5f0', border:'1.5px solid #e5e2dd' }}>
+          <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0"
+            style={{ background:'linear-gradient(135deg,#f59e0b,#d97706)', color:'#fff' }}>
+            {(user.name || 'A').charAt(0).toUpperCase()}
+          </div>
+          <div className="leading-tight">
+            <p className="text-sm font-bold" style={{ color:'#1c1917' }}>{user.name}</p>
+            <p className="text-xs font-semibold capitalize" style={{ color:'#d97706' }}>{user.role}</p>
+          </div>
+        </div>
+
+        {user.role === 'admin' && (
+          <button onClick={() => navigate('/admin')} className="btn-shine flex-shrink-0"
+            style={{ background:'#fff', color:'#b45309', border:'1.5px solid #fcd34d', fontWeight:700, fontSize:'13px', padding:'8px 16px', borderRadius:'10px', cursor:'pointer' }}>
+            ⚙ Admin
+          </button>
+        )}
+
+        {/* New Session — big prominent CTA */}
+        <button onClick={() => setShowCreate(true)} className="btn-shine flex-shrink-0"
+          style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px 22px', borderRadius:'12px', background:'linear-gradient(135deg,#fbbf24 0%,#f59e0b 50%,#d97706 100%)', color:'#fff', border:'none', fontWeight:800, fontSize:'14px', boxShadow:'0 6px 24px rgba(245,158,11,0.5)', cursor:'pointer', letterSpacing:'0.01em' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          New Session
+        </button>
+
+        <button onClick={logout} className="btn-shine flex-shrink-0"
+          onMouseEnter={e => { e.currentTarget.style.background='#fef2f2'; e.currentTarget.style.borderColor='#fca5a5'; e.currentTarget.style.color='#dc2626'; }}
+          onMouseLeave={e => { e.currentTarget.style.background='#fff'; e.currentTarget.style.borderColor='#e5e2dd'; e.currentTarget.style.color='#78716c'; }}
+          style={{ background:'#fff', color:'#78716c', border:'1.5px solid #e5e2dd', fontWeight:700, fontSize:'13px', padding:'8px 16px', borderRadius:'10px', cursor:'pointer', transition:'all 0.2s' }}>
+          Sign out
+        </button>
       </header>
 
-      <main className="flex-1 min-h-0 overflow-y-auto flex flex-col px-6 py-6">
-
-        {/* ── Stat Cards ── */}
-        <div className="grid grid-cols-3 gap-4 mb-6 shrink-0">
-          <StatCard icon="🟢" label="Active Sessions"  value={activeCt}  topColor="#16a34a" iconBg="#dcfce7" textColor="#15803d" delay="1" active={filter==='active'}  onClick={() => toggleFilter('active')} />
-          <StatCard icon="⏳" label="Waiting"          value={waitingCt} topColor="#f59e0b" iconBg="#fef9c3" textColor="#b45309" delay="2" active={filter==='waiting'} onClick={() => toggleFilter('waiting')} />
-          <StatCard icon="✓"  label="Completed"        value={endedCt}   topColor="#94a3b8" iconBg="#f1f5f9" textColor="#475569" delay="3" active={filter==='ended'}   onClick={() => toggleFilter('ended')} />
-        </div>
+      <main className="flex-1 min-h-0 overflow-y-auto flex flex-col" style={{ padding:'32px 40px' }}>
 
         {/* ── Invite banner ── */}
         {inviteInfo && (
@@ -271,7 +301,7 @@ export default function AgentDashboard() {
                   </code>
                   <button
                     onClick={() => { navigator.clipboard.writeText(inviteInfo.inviteLink); setCopied(true); setTimeout(()=>setCopied(false),2000); }}
-                    className="px-4 py-2 rounded-xl text-xs font-bold btn-shine btn-shine-green whitespace-nowrap"
+                    className="px-4 py-2 rounded-xl text-xs font-bold btn-shine whitespace-nowrap"
                     style={{ background: copied ? '#dcfce7' : '#16a34a', color: copied ? '#15803d' : '#fff', border: copied ? '1px solid #bbf7d0' : 'none', boxShadow: copied ? 'none' : '0 4px 16px #16a34a44' }}>
                     {copied ? '✓ Copied' : 'Copy Link'}
                   </button>
@@ -291,72 +321,16 @@ export default function AgentDashboard() {
           </div>
         )}
 
-        {/* ── Top bar ── */}
-        <div className="flex items-center justify-between mb-4 shrink-0">
-          <div className="flex items-center gap-3">
-            <div>
-              <h1 className="text-2xl font-black" style={{ color:'#1c1917' }}>Sessions</h1>
-              <p className="text-xs mt-0.5" style={{ color:'#78716c' }}>
-                {filtered.length} of {sessions.length} session{sessions.length !== 1 ? 's' : ''}
-                {search && ` matching "${search}"`}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            {/* Mobile search */}
-            <div className="relative md:hidden">
-              <span style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', color:'#a8a29e', fontSize:'13px', pointerEvents:'none' }}>🔍</span>
-              <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…"
-                style={{ paddingLeft:'30px', paddingRight:'10px', paddingTop:'7px', paddingBottom:'7px', border:'1.5px solid #e5e2dd', borderRadius:'10px', background:'#fff', color:'#1c1917', outline:'none', fontSize:'13px', width:'140px' }}
-                onFocus={e => { e.target.style.borderColor='#f59e0b'; }}
-                onBlur={e  => { e.target.style.borderColor='#e5e2dd'; }} />
-            </div>
-            <button onClick={() => setShowCreate(true)}
-              className="px-5 py-2.5 rounded-xl text-sm font-bold btn-shine"
-              style={{ background:'linear-gradient(135deg,#f59e0b,#d97706)', color:'#fff', border:'none', boxShadow:'0 6px 24px #f59e0b55' }}>
-              + New Session
-            </button>
-          </div>
-        </div>
-
-        {/* ── Filter tabs ── */}
-        <div className="flex gap-1 mb-4 p-1 rounded-xl w-fit shrink-0"
-          style={{ background:'#ede9e2', border:'1px solid #e0dbd4' }}>
-          {[
-            { key:'all',     label:'All',     count:sessions.length },
-            { key:'active',  label:'Active',  count:activeCt },
-            { key:'waiting', label:'Waiting', count:waitingCt },
-            { key:'ended',   label:'Ended',   count:endedCt },
-          ].map(f => (
-            <button key={f.key} onClick={() => setFilter(f.key === filter ? 'all' : f.key)}
-              className="px-4 py-1.5 rounded-lg text-xs flex items-center gap-1.5"
-              style={{
-                background: filter === f.key ? '#fff' : 'transparent',
-                color: filter === f.key ? '#d97706' : '#78716c',
-                boxShadow: filter === f.key ? '0 1px 6px rgba(0,0,0,0.1)' : 'none',
-                border: filter === f.key ? '1px solid #fde68a' : '1px solid transparent',
-                fontWeight: filter === f.key ? 700 : 500,
-                transition: 'all 0.2s ease',
-              }}>
-              {f.label}
-              {f.count > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full"
-                  style={{ background: filter === f.key ? '#fef9c3' : '#e0dbd4', color: filter === f.key ? '#d97706' : '#9c9690', fontSize:'10px', fontWeight:700 }}>
-                  {f.count}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* ── Session list — flex-1 fills remaining height ── */}
-        <div className="flex-1 min-h-0 flex flex-col">
+        {/* ── Session list — cards bleed to left edge ── */}
+        <div className="flex flex-col gap-3" style={{ marginLeft: '-48px' }}>
           {loading ? (
-            <div className="flex flex-col gap-2 flex-1">
-              {[1,2,3,4].map(i => <div key={i} className="flex-1 shimmer min-h-[56px] max-h-[110px]" />)}
-            </div>
+            <>
+              {[1,2,3,4].map(i => (
+                <div key={i} className="shimmer" style={{ height:'76px', borderRadius:'0 16px 16px 0' }} />
+              ))}
+            </>
           ) : filtered.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center scale-in">
+            <div className="flex flex-col items-center justify-center py-20 scale-in">
               <div className="float inline-block text-5xl mb-4">📋</div>
               <p className="font-semibold mb-1" style={{ color:'#1c1917' }}>No sessions found</p>
               <p className="text-sm" style={{ color:'#78716c' }}>
@@ -370,79 +344,93 @@ export default function AgentDashboard() {
               )}
             </div>
           ) : (
-            <div className="flex flex-col gap-2 flex-1 min-h-0">
-              {filtered.map((s, i) => {
-                const sc = STATUS_CFG[s.status] || STATUS_CFG.ended;
-                return (
-                  <div key={s.id}
-                    className={`flex-1 flex flex-col justify-center rounded-2xl slide-up slide-up-${Math.min(i+1,5)}`}
-                    style={{ background:'#fff', border:'1px solid #f0ede8', borderLeft:`4px solid ${sc.border}`, boxShadow:'0 1px 4px rgba(0,0,0,0.05)', transition:'transform 0.18s ease, box-shadow 0.18s ease', minHeight:'56px', maxHeight:'130px' }}
-                    onMouseEnter={e => { e.currentTarget.style.transform='translateX(2px)'; e.currentTarget.style.boxShadow=`0 4px 20px rgba(0,0,0,0.08), 0 0 0 1.5px #fcd34d`; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow='0 1px 4px rgba(0,0,0,0.05)'; }}>
+            filtered.map((s, i) => {
+              const sc = STATUS_CFG[s.status] || STATUS_CFG.ended;
+              return (
+                <div key={s.id}
+                  className={`rounded-2xl slide-up slide-up-${Math.min(i+1,5)}`}
+                  style={{
+                    background: '#fff',
+                    border: '1.5px solid #f0ede8',
+                    borderLeft: `6px solid ${sc.border}`,
+                    borderRadius: '0 16px 16px 0',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                    transition: 'box-shadow 0.18s ease',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow=`0 6px 24px rgba(0,0,0,0.09), 0 0 0 1.5px #fcd34d`; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'; }}>
 
-                    <div className="flex items-center gap-4 px-5 py-3">
-                      {/* Status + Title */}
-                      <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                        <StatusBadge status={s.status} />
-                        <span className="font-bold text-sm truncate" style={{ color:'#1c1917' }}>{s.title}</span>
+                  <div className="flex items-center gap-5 py-4" style={{ paddingLeft:'52px', paddingRight:'24px' }}>
+
+                    {/* Status badge + Title block */}
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <StatusBadge status={s.status} />
+                      <div className="min-w-0">
+                        <p className="font-bold text-sm truncate" style={{ color:'#1c1917' }}>{s.title}</p>
+                        <p className="text-xs mt-0.5" style={{ color:'#a8a29e' }}>{formatTime(s.created_at)}</p>
                       </div>
+                    </div>
 
-                      {/* Meta */}
-                      <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
-                        <span className="flex items-center gap-1.5 text-xs" style={{ color:'#78716c' }}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    {/* Meta pills */}
+                    <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
+                      {s.duration && (
+                        <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl"
+                          style={{ background:'#f7f5f0', color:'#78716c', border:'1px solid #ede9e2' }}>
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                           </svg>
-                          {formatTime(s.created_at)}
+                          {formatDuration(s.duration)}
                         </span>
-                        {s.duration && <span className="text-xs" style={{ color:'#78716c' }}>⏱ {formatDuration(s.duration)}</span>}
-                        <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
-                          style={{ background:'#f7f5f0', color:'#78716c', border:'1px solid #f0ede8' }}>
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
-                          </svg>
-                          {s.totalParticipants}
-                        </span>
-                        <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full"
-                          style={{ background:'#f7f5f0', color:'#78716c', border:'1px solid #f0ede8' }}>
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                          </svg>
-                          {s.messageCount}
-                        </span>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {s.status !== 'ended' && s.invite_token && <CopyInviteBtn token={s.invite_token} />}
-                        {s.status !== 'ended' && (
-                          <button onClick={() => navigate(`/call/${s.id}`)}
-                            className="px-4 py-1.5 rounded-lg text-xs font-bold btn-shine whitespace-nowrap"
-                            style={{ background:'linear-gradient(135deg,#f59e0b,#d97706)', color:'#fff', border:'none', boxShadow:'0 2px 10px #f59e0b44' }}>
-                            {s.status === 'active' ? '↩ Rejoin' : '→ Join'}
-                          </button>
-                        )}
-                        {s.recording_path && (
-                          <a href={s.recording_path} target="_blank" rel="noopener noreferrer"
-                            className="px-3 py-1.5 rounded-lg text-xs btn-shine whitespace-nowrap"
-                            style={{ background:'#f7f5f0', color:'#78716c', border:'1px solid #e5e2dd' }}>
-                            ⬇ Rec
-                          </a>
-                        )}
-                      </div>
+                      )}
+                      <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl"
+                        style={{ background:'#f7f5f0', color:'#78716c', border:'1px solid #ede9e2' }}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                          <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                        </svg>
+                        {s.totalParticipants}
+                      </span>
+                      <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl"
+                        style={{ background:'#f7f5f0', color:'#78716c', border:'1px solid #ede9e2' }}>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                        </svg>
+                        {s.messageCount}
+                      </span>
                     </div>
 
-                    {/* Mobile meta */}
-                    <div className="lg:hidden flex gap-3 px-5 pb-2 text-xs" style={{ color:'#78716c' }}>
-                      <span>🕐 {formatTime(s.created_at)}</span>
-                      <span>👥 {s.totalParticipants}</span>
-                      <span>💬 {s.messageCount}</span>
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {s.status !== 'ended' && s.invite_token && <CopyInviteBtn token={s.invite_token} />}
+                      {s.status !== 'ended' && (
+                        <button onClick={() => navigate(`/call/${s.id}`)}
+                          className="px-4 py-2 rounded-xl text-xs font-bold btn-shine whitespace-nowrap"
+                          style={{ background:'linear-gradient(135deg,#f59e0b,#d97706)', color:'#fff', border:'none', boxShadow:'0 3px 12px #f59e0b44' }}>
+                          {s.status === 'active' ? '↩ Rejoin' : '→ Join'}
+                        </button>
+                      )}
+                      {s.recording_path && (
+                        <a href={s.recording_path} target="_blank" rel="noopener noreferrer"
+                          className="px-3 py-2 rounded-xl text-xs btn-shine whitespace-nowrap flex items-center gap-1.5"
+                          style={{ background:'#f7f5f0', color:'#78716c', border:'1.5px solid #e5e2dd', textDecoration:'none' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                          </svg>
+                          Recording
+                        </a>
+                      )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+
+                  {/* Mobile meta */}
+                  <div className="lg:hidden flex gap-3 pb-3 text-xs" style={{ color:'#a8a29e', paddingLeft:'52px' }}>
+                    <span>👥 {s.totalParticipants} participants</span>
+                    <span>💬 {s.messageCount} messages</span>
+                    {s.duration && <span>⏱ {formatDuration(s.duration)}</span>}
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
       </main>

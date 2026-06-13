@@ -183,8 +183,7 @@ Client starts at `https://localhost:5173`
 - Send chat messages in the right panel
 - Attach files via the paperclip icon in chat
 - Agent can start/stop recording using the record button
-- Agent clicks the red phone button to **End Session** (for all)
-- Customer clicks the red phone button to **Leave** (session stays open for agent)
+- Either participant clicks the red phone button → **"Do you want to end the session?"** confirm → session ends for everyone
 
 ### Admin Flow
 1. Log in as `admin@demo.com` / `password123`
@@ -242,13 +241,13 @@ Client starts at `https://localhost:5173`
 | `resume-consumer` | Client → Server | Resume a paused consumer |
 | `close-producer` | Client → Server | Pause/resume a producer (mute/unmute) |
 | `send-message` | Client → Server | Send a chat message |
-| `end-session` | Client → Server | End session (agent only) |
+| `end-session` | Client → Server | End session for all participants (agent or customer) |
 | `peer-joined` | Server → Client | A new participant joined |
 | `peer-left` | Server → Client | A participant left |
 | `new-producer` | Server → Client | Remote peer started a new media track |
 | `producer-state-changed` | Server → Client | Remote peer muted/unmuted |
 | `new-message` | Server → Client | New chat message |
-| `session-ended` | Server → Client | Session was ended by agent |
+| `session-ended` | Server → Client | Session was ended (by agent or customer) |
 | `consumer-closed` | Server → Client | A consumer track was closed |
 
 ---
