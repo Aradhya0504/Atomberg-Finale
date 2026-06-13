@@ -420,9 +420,12 @@ export default function CallRoom() {
         });
 
         socket.on('session-ended', ({ by }) => {
-          setStatus('ended');
-          setErrorMsg(`Session ended by ${by}`);
-          cleanup();
+          setStatus(prev => {
+            if (prev === 'ended') return prev; // already showing ended screen
+            setErrorMsg(by ? `Session ended by ${by}` : 'The support session has concluded.');
+            cleanup();
+            return 'ended';
+          });
         });
 
         setStatus('in-call');
@@ -487,7 +490,9 @@ export default function CallRoom() {
     try {
       await emitAsync(socketRef.current, 'end-session', { sessionId });
     } catch {}
-    navigate(isAgent ? '/dashboard' : '/');
+    // Server confirmed end — show the screen directly without waiting for the event to bounce back
+    setStatus('ended');
+    setErrorMsg('The support session has concluded.');
   }
 
   function sendMessage(text) {
