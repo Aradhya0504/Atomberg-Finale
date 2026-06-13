@@ -278,7 +278,7 @@ async function sendMessage(socket, io, { sessionId, content, messageType, fileUr
 async function endSession(socket, io, { sessionId }, cb) {
   try {
     const meta = socketMeta.get(socket.id);
-    if (!meta || meta.role === 'customer') return cb({ error: 'Not authorized to end session' });
+    if (!meta) return cb({ error: 'Not in a session' });
 
     const now = Date.now();
     await Session.findByIdAndUpdate(sessionId, { status: 'ended', ended_at: now });

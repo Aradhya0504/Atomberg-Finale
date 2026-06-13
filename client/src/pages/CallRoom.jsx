@@ -483,17 +483,10 @@ export default function CallRoom() {
   }
 
   async function handleEndOrLeave() {
-    if (isAgent) {
-      if (!confirm('End the session for all participants?')) return;
-      try {
-        await emitAsync(socketRef.current, 'end-session', { sessionId });
-      } catch {}
-    } else {
-      // Customer: tell server immediately so peer-left fires without 15s grace delay
-      try {
-        await emitAsync(socketRef.current, 'leave-room', {});
-      } catch {}
-    }
+    if (!confirm('Do you want to end the session?')) return;
+    try {
+      await emitAsync(socketRef.current, 'end-session', { sessionId });
+    } catch {}
     navigate(isAgent ? '/dashboard' : '/');
   }
 
